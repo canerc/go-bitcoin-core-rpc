@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/caner/go-bitcoin-core-rpc/btcjson"
+	"github.com/canerc/go-bitcoin-core-rpc/btcjson"
 
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcutil"

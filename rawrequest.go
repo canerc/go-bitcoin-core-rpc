@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/caner/go-bitcoin-core-rpc/btcjson"
+	"github.com/canerc/go-bitcoin-core-rpc/btcjson"
 )
 
 // FutureRawResult is a future promise to deliver the result of a RawRequest RPC

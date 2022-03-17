@@ -9,7 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
-	"github.com/caner/go-bitcoin-core-rpc/btcjson"
+	"github.com/canerc/go-bitcoin-core-rpc/btcjson"
 
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
