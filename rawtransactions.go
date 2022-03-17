@@ -9,10 +9,11 @@ import (
 	"encoding/hex"
 	"encoding/json"
 
+	"github.com/caner/go-bitcoin-core-rpc/btcjson"
+
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
-	"github.com/stevenroose/go-bitcoin-core-rpc/btcjson"
 )
 
 // SigHashType enumerates the available signature hashing types that the
@@ -285,7 +286,7 @@ func (r FutureSendRawTransactionResult) Receive() (*chainhash.Hash, error) {
 // the returned instance.
 //
 // See SendRawTransaction for the blocking version and more details.
-func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool) FutureSendRawTransactionResult {
+func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx) FutureSendRawTransactionResult {
 	txHex := ""
 	if tx != nil {
 		// Serialize the transaction and convert to hex string.
@@ -296,14 +297,14 @@ func (c *Client) SendRawTransactionAsync(tx *wire.MsgTx, allowHighFees bool) Fut
 		txHex = hex.EncodeToString(buf.Bytes())
 	}
 
-	cmd := btcjson.NewSendRawTransactionCmd(txHex, &allowHighFees)
+	cmd := btcjson.NewSendRawTransactionCmd(txHex)
 	return c.sendCmd(cmd)
 }
 
 // SendRawTransaction submits the encoded transaction to the server which will
 // then relay it to the network.
-func (c *Client) SendRawTransaction(tx *wire.MsgTx, allowHighFees bool) (*chainhash.Hash, error) {
-	return c.SendRawTransactionAsync(tx, allowHighFees).Receive()
+func (c *Client) SendRawTransaction(tx *wire.MsgTx) (*chainhash.Hash, error) {
+	return c.SendRawTransactionAsync(tx).Receive()
 }
 
 // FutureSignRawTransactionResult is a future promise to deliver the result
@@ -358,6 +359,21 @@ func (c *Client) SignRawTransactionAsync(tx *wire.MsgTx) FutureSignRawTransactio
 	}
 
 	cmd := btcjson.NewSignRawTransactionCmd(txHex, nil, nil, nil)
+	return c.sendCmd(cmd)
+}
+
+func (c *Client) SignRawTransactionWithWalletAsync(tx *wire.MsgTx) FutureSignRawTransactionResult {
+	txHex := ""
+	if tx != nil {
+		// Serialize the transaction and convert to hex string.
+		buf := bytes.NewBuffer(make([]byte, 0, tx.SerializeSize()))
+		if err := tx.Serialize(buf); err != nil {
+			return newFutureError(err)
+		}
+		txHex = hex.EncodeToString(buf.Bytes())
+	}
+
+	cmd := btcjson.NewSignRawTransactionWithWalletCmd(txHex, nil, nil, nil)
 	return c.sendCmd(cmd)
 }
 
@@ -503,6 +519,17 @@ func (c *Client) SignRawTransaction4(tx *wire.MsgTx,
 
 	return c.SignRawTransaction4Async(tx, inputs, privKeysWIF,
 		hashType).Receive()
+}
+
+// SignRawTransaction signs inputs for the passed transaction and returns the
+// signed transaction as well as whether or not all inputs are now signed.
+//
+// This function assumes the RPC server already knows the input transactions and
+// private keys for the passed transaction which needs to be signed and uses the
+// default signature hash type.  Use one of the SignRawTransaction# variants to
+// specify that information if needed.
+func (c *Client) SignRawTransactionWithWallet(tx *wire.MsgTx) (*wire.MsgTx, bool, error) {
+	return c.SignRawTransactionWithWalletAsync(tx).Receive()
 }
 
 // FutureSearchRawTransactionsResult is a future promise to deliver the result

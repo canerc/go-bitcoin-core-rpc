@@ -8,11 +8,12 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"github.com/caner/go-bitcoin-core-rpc/btcjson"
+
 	"github.com/btcsuite/btcd/chaincfg"
 	"github.com/btcsuite/btcd/chaincfg/chainhash"
 	"github.com/btcsuite/btcd/wire"
 	"github.com/btcsuite/btcutil"
-	"github.com/stevenroose/go-bitcoin-core-rpc/btcjson"
 )
 
 // *****************************

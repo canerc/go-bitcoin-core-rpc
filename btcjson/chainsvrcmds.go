@@ -672,10 +672,10 @@ type SendRawTransactionCmd struct {
 //
 // The parameters which are pointers indicate they are optional.  Passing nil
 // for optional parameters will use the default value.
-func NewSendRawTransactionCmd(hexTx string, allowHighFees *bool) *SendRawTransactionCmd {
+func NewSendRawTransactionCmd(hexTx string) *SendRawTransactionCmd {
 	return &SendRawTransactionCmd{
-		HexTx:         hexTx,
-		AllowHighFees: allowHighFees,
+		HexTx: hexTx,
+		// AllowHighFees: allowHighFees,
 	}
 }
 
